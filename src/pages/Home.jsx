@@ -20,15 +20,10 @@ const Home = () => {
 
   const { search = "" } = useCart();
 
-  // ✅ FIXED FETCH (PORT 5000)
+  // ✅ FETCH FROM BACKEND
   useEffect(() => {
     fetch("https://protien-shop-backend.onrender.com/products")
-      .then((res) => {
-        if (!res.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return res.json();
-      })
+      .then((res) => res.json())
       .then((data) => {
         console.log("DATA FROM BACKEND:", data);
         setProducts(Array.isArray(data) ? data : []);
@@ -36,17 +31,17 @@ const Home = () => {
       .catch((err) => console.error("FETCH ERROR:", err));
   }, []);
 
-  // 🔍 FILTER
+  // 🔥 FIXED FILTER (SAFE)
   let filteredProducts =
     selectedCategory === "All"
       ? products
       : products.filter(
           (p) =>
-            p.category?.toLowerCase().trim() ===
+            (p.category || "").toLowerCase().trim() ===
             selectedCategory.toLowerCase().trim()
         );
 
-  // 🔍 SEARCH FILTER
+  // 🔍 SEARCH FILTER (SAFE)
   filteredProducts = filteredProducts.filter((p) =>
     (p.name || "").toLowerCase().includes(search.toLowerCase())
   );
@@ -96,7 +91,7 @@ const Home = () => {
       <div className="products">
         {filteredProducts.length > 0 ? (
           filteredProducts.map((p, index) => (
-            <ProductCard key={index} product={p} />
+            <ProductCard key={p.name || index} product={p} />
           ))
         ) : (
           <p style={{ color: "white" }}>No products found</p>
