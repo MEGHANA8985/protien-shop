@@ -53,15 +53,24 @@ const ProductCard = ({ product }) => {
       </span>
 
       <p style={{ fontWeight: "bold" }}>₹{product.price}</p>
+const { addToCart } = useCart();
 
-      <button
-        onClick={() => {
-          addToCart(product);
-          alert("Added to cart!");
-        }}
-      >
-        Add to Cart
-      </button>
+<button
+  onClick={(e) => {
+    e.stopPropagation();
+    addToCart(product);
+  }}
+  style={{
+    background: "#ff9f00",
+    border: "none",
+    padding: "8px",
+    color: "white",
+    cursor: "pointer",
+    marginTop: "10px",
+  }}
+>
+  Add to Cart
+</button>
     </div>
   );
 };

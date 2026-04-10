@@ -1,47 +1,51 @@
-import { useCart } from "../context/CartContext";
+// import { useCart } from "../context/CartContext";
 import { useAuth } from "../context/AuthContext";
+import { useCart } from "../context/CartContext";
 import { useNavigate } from "react-router-dom";
 
 const Checkout = () => {
-  const { cart } = useCart();
-  const { user } = useAuth();
+  const { cart, placeOrder } = useCart();
   const navigate = useNavigate();
 
-  const total = cart.reduce((sum, item) => sum + item.price, 0);
+  const total = cart.reduce((acc, item) => acc + item.price * item.qty, 0);
 
-  if (!user) {
-    return (
-      <div style={{ padding: "20px" }}>
-        <h2>Please login to place order</h2>
-        <button onClick={() => navigate("/login")}>Go to Login</button>
-      </div>
-    );
-  }
+  const handleOrder = () => {
+    alert("🎉 Order Placed Successfully!");
+    placeOrder(); // clear cart
+    navigate("/"); // go to home
+  };
 
   return (
     <div style={{ padding: "20px" }}>
       <h2>Checkout</h2>
 
-      {cart.map((item) => (
-        <div key={item.id}>
-          {item.name} - ₹{item.price}
-        </div>
-      ))}
+      {cart.length === 0 ? (
+        <p>Your cart is empty</p>
+      ) : (
+        <>
+          {cart.map((item) => (
+            <div key={item.name} style={{ marginBottom: "10px" }}>
+              {item.name} × {item.qty} = ₹{item.price * item.qty}
+            </div>
+          ))}
 
-      <h3>Total: ₹{total}</h3>
+          <h3>Total: ₹{total}</h3>
 
-      <button
-        style={{
-          marginTop: "20px",
-          padding: "10px 20px",
-          background: "#2874f0",
-          color: "white",
-          border: "none",
-        }}
-        onClick={() => alert("Order Placed Successfully!")}
-      >
-        Place Order
-      </button>
+          <button
+            onClick={handleOrder}
+            style={{
+              background: "green",
+              color: "white",
+              padding: "10px 20px",
+              border: "none",
+              cursor: "pointer",
+              marginTop: "20px",
+            }}
+          >
+            Place Order
+          </button>
+        </>
+      )}
     </div>
   );
 };
